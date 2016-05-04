@@ -1,7 +1,6 @@
 module dcad.types;
 
 import std.json,
-       std.file,
        std.stdio,
        std.bitmanip;
 
@@ -39,8 +38,6 @@ class DCAFile {
       frame.data = f.rawRead(new ubyte[frame.size]);
       this.frames ~= frame;
     }
-
-    writefln("frames: %s", frames.length);
   }
 }
 
