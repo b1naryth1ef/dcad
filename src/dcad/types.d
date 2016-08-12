@@ -13,6 +13,8 @@ class DCAFile {
   DCAFileMeta meta;
   Frame[] frames;
 
+  this() {}
+
   this(File f) {
     char[3] magicHeader;
     f.rawRead(magicHeader);
@@ -21,11 +23,21 @@ class DCAFile {
       assert(false, "standard DCA files are not supported yet");
     } else {
       f.seek(0);
-      this.readOpusData(f);
+      this.readOpusDataFile(f);
     }
   }
 
-  void readOpusData(File f) {
+  /**
+    Creates a new DCAFile without trying to read magic bytes. This is useful
+    for file objects that do not support streaming.
+  */
+  static DCAFile fromRawDCA(File f) {
+    DCAFile dca = new DCAFile;
+    dca.readOpusDataFile(f);
+    return dca;
+  }
+
+  private void readOpusDataFile(File f) {
     while (true) {
       Frame frame;
 
