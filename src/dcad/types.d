@@ -5,7 +5,7 @@ import std.json,
        std.bitmanip;
 
 struct Frame {
-  ushort size;
+  short size;
   ubyte[] data;
 }
 
@@ -32,9 +32,9 @@ class DCAFile {
       // Read length of frame
       auto frameSize = f.rawRead(new ubyte[2]);
       if (frameSize.length == 0) break;
-      frame.size = littleEndianToNative!(ushort, 2)(frameSize[0..2]);
+      frame.size = frameSize.read!(short, Endian.littleEndian);
 
-      // Read frame
+      // Read frame data
       frame.data = f.rawRead(new ubyte[frame.size]);
       this.frames ~= frame;
     }
