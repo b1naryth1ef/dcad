@@ -2,11 +2,45 @@ module dcad.types;
 
 import std.json,
        std.stdio,
-       std.bitmanip;
+       std.bitmanip,
+       std.outbuffer;
 
 struct Frame {
   short size;
   ubyte[] data;
+
+  this(ubyte[] data) {
+    this.data = data;
+    this.size = cast(short)this.data.length;
+  }
+
+  bool read(File f) {
+    // Read length of frame
+    auto frameSize = f.rawRead(new ubyte[2]);
+    if (frameSize.length == 0) {
+      return false;
+    }
+
+    this.size = frameSize.read!(short, Endian.littleEndian);
+
+    if (this.size == 0) {
+      return false;
+    }
+
+    // Read frame data
+    this.data = f.rawRead(new ubyte[this.size]);
+    return true;
+  }
+
+  void write(OutBuffer buffer) {
+    buffer.write(nativeToLittleEndian(this.size));
+    buffer.write(this.data);
+  }
+
+  void write(File file) {
+    file.rawWrite(nativeToLittleEndian(this.size));
+    file.rawWrite(this.data);
+  }
 }
 
 class DCAFile {
@@ -27,6 +61,22 @@ class DCAFile {
     }
   }
 
+  OutBuffer toOutBuffer() {
+    OutBuffer buffer = new OutBuffer;
+
+    foreach (frame; this.frames) {
+      frame.write(buffer);
+    }
+
+    return buffer;
+  }
+
+  void save(string path) {
+    File f = File(path, "w");
+    f.rawWrite(this.toOutBuffer().toBytes);
+    f.close();
+  }
+
   /**
     Creates a new DCAFile without trying to read magic bytes. This is useful
     for file objects that do not support streaming.
@@ -41,13 +91,10 @@ class DCAFile {
     while (true) {
       Frame frame;
 
-      // Read length of frame
-      auto frameSize = f.rawRead(new ubyte[2]);
-      if (frameSize.length == 0) break;
-      frame.size = frameSize.read!(short, Endian.littleEndian);
+      if (!frame.read(f)) {
+        break;
+      }
 
-      // Read frame data
-      frame.data = f.rawRead(new ubyte[frame.size]);
       this.frames ~= frame;
     }
   }

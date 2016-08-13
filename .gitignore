@@ -1,3 +1,7 @@
 .dub/
 __test__library__
 libdcad.a
+*.mp3
+*.dca
+*.wav
+dcad
