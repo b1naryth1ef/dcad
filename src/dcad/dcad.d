@@ -2,10 +2,6 @@ module dcad.dcad;
 
 public import dcad.types;
 
-const short channels = 2;
-const int frameRate = 48000;
-const int frameSize = 960;
-
 import std.stdio,
        std.getopt;
 
