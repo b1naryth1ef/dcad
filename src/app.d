@@ -1,10 +1,9 @@
-module dcad.dcad;
-
-public import dcad.types;
+module main;
 
 import std.stdio,
        std.getopt;
 
+import dcad.types;
 import opus.encoder;
 
 struct CommandLineArgs {

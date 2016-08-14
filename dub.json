@@ -6,7 +6,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "opus": "~>0.0.1"
-  },
-  "targetType": "executable"
+  }
 }
 
