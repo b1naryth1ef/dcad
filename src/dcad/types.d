@@ -5,30 +5,53 @@ import std.json,
        std.bitmanip,
        std.outbuffer;
 
+ubyte[][] rawReadFramesFromFile(File f) {
+  ubyte[][] frames;
+
+  while (true) {
+    ubyte[] frame = rawReadFrameFromFile(f);
+    if (frame.length == 0) break;
+    frames ~= frame;
+  }
+
+  return frames;
+}
+
+ubyte[] rawReadFrameFromFile(File f) {
+  ubyte[] data;
+
+  auto frameSize = f.rawRead(new ubyte[2]);
+  if (frameSize.length == 0) {
+    return data;
+  }
+
+  short size = frameSize.read!(short, Endian.littleEndian);
+  if (size == 0) {
+    return data;
+  }
+
+  return f.rawRead(new ubyte[size]);
+}
+
 struct Frame {
-  short size;
   ubyte[] data;
 
   this(ubyte[] data) {
     this.data = data;
-    this.size = cast(short)this.data.length;
+  }
+
+  // TODO: deprecate
+  @property size_t size() {
+    return data.length;
   }
 
   bool read(File f) {
-    // Read length of frame
-    auto frameSize = f.rawRead(new ubyte[2]);
-    if (frameSize.length == 0) {
+    this.data = rawReadFrameFromFile(f);
+
+    if (this.data.length == 0) {
       return false;
     }
 
-    this.size = frameSize.read!(short, Endian.littleEndian);
-
-    if (this.size == 0) {
-      return false;
-    }
-
-    // Read frame data
-    this.data = f.rawRead(new ubyte[this.size]);
     return true;
   }
 
@@ -58,6 +81,12 @@ class DCAFile {
     } else {
       f.seek(0);
       this.readOpusDataFile(f);
+    }
+  }
+
+  this(ubyte[][] rawFrames) {
+    foreach (frame; rawFrames) {
+      this.frames ~= Frame(frame);
     }
   }
 
