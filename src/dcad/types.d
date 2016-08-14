@@ -40,11 +40,6 @@ struct Frame {
     this.data = data;
   }
 
-  // TODO: deprecate
-  @property size_t size() {
-    return data.length;
-  }
-
   bool read(File f) {
     this.data = rawReadFrameFromFile(f);
 
@@ -56,12 +51,12 @@ struct Frame {
   }
 
   void write(OutBuffer buffer) {
-    buffer.write(nativeToLittleEndian(this.size));
+    buffer.write(nativeToLittleEndian(this.data.length));
     buffer.write(this.data);
   }
 
   void write(File file) {
-    file.rawWrite(nativeToLittleEndian(this.size));
+    file.rawWrite(nativeToLittleEndian(this.data.length));
     file.rawWrite(this.data);
   }
 }
