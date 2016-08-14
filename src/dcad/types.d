@@ -51,12 +51,12 @@ struct Frame {
   }
 
   void write(OutBuffer buffer) {
-    buffer.write(nativeToLittleEndian(this.data.length));
+    buffer.write(nativeToLittleEndian(cast(short)this.data.length));
     buffer.write(this.data);
   }
 
   void write(File file) {
-    file.rawWrite(nativeToLittleEndian(this.data.length));
+    file.rawWrite(nativeToLittleEndian(cast(short)this.data.length));
     file.rawWrite(this.data);
   }
 }
