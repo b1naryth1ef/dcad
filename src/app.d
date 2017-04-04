@@ -19,6 +19,8 @@ struct CommandLineArgs {
 
   string input = "pipe:0";
   string output = "pipe:1";
+
+  bool flush = true;
 }
 
 void encode(CommandLineArgs args) {
@@ -58,8 +60,13 @@ void encode(CommandLineArgs args) {
     }
 
     Frame(enc.encode(data, args.frameSize)).write(output);
+
+    if (args.flush) {
+      output.flush();
+    }
   }
 
+  output.flush();
   output.close();
 }
 
@@ -71,12 +78,13 @@ void main(string[] rawargs) {
     "channels|ac", "Number of audio channels (1 = mono, 2 = stero)", &args.channels,
     "rate|ar", "Audio sampling rate", &args.frameRate,
     "size|as", "Audio frame size", &args.frameSize,
-    "rate|ab", "Audio bitrate", &args.bitrate,
+    "bitrate|ab", "Audio bitrate", &args.bitrate,
     "fec", "Enable FEC (forward error correction)", &args.fec,
     "packet-loss-percent", "FEC packet loss percent", &args.packetLossPercent,
     "raw", "Don't include DCA metadata/magic bytes (raw OPUS)", &args.raw,
     "input", "Input file or pipe", &args.input,
     "output", "Output file or pipe", &args.output,
+    "flush", "Flush output after each frame, assists in real time pipelines", &args.flush,
   );
 
   if (opts.helpWanted) {
