@@ -5,7 +5,7 @@
   "homepage": "http://github.com/b1naryth1ef/dcad",
   "license": "GPL-2.0",
   "dependencies": {
-    "opus": "~>0.0.2"
+    "opus": "~>0.0.3"
   }
 }
 
