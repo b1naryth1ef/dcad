@@ -1,0 +1,24 @@
+language: d
+
+before_install:
+  - sudo apt-get update -qq
+  - wget http://ftp.us.debian.org/debian/pool/main/o/opus/libopus0_1.1-2_amd64.deb
+  - wget http://ftp.us.debian.org/debian/pool/main/o/opus/libopus-dev_1.1-2_amd64.deb
+  - sudo dpkg -i *.deb
+  - dub upgrade
+
+before_deploy:
+  - mv dcad dcad-linux-x64
+
+script: dub build --compiler=${DC} --build=release
+
+d:
+  - dmd
+
+deploy:
+  provider: releases
+  api_key:
+    secure: A87YNEAi57DS10SNDpNNZRRsR3O5jNZffllJNMcXNiDu8LdPlMv84sZGRWeHJ0Qnw7g3dWSX65mnR1bqXz0oVt4ASkdfIteUnQ6OkIyld3hrq4Um5fslFqeImyqqvzDUvZHCVNOqnxiHc+9zbGoDjXPf6H0pgcvewMwIEVI9ebVrjfnl0fUbJ1O/SxdbxfiJQMoqQ4MVBpYv9dAkNkzhpHGhzjIhAU9n2nf368dTxDEMOwrIQuSKLRgd0WFNYKiq674Cz4IwAPRR9h7/nKa6Py9ibWh6usqsemNNP1z0wi120+m0/ai1AsKkGR152sTyj0LTjUAVnm5O9diP858vYtC6zO4ccJdGPMkldcWXhKeSU8A4IWWeO3V0mnWBYz5sxPdpkEJqXv6OKgpC409+bDH73rj58oHmRVHeciWg65WbSESSIVrMxxKUThtdZfzkR3FA8IH86BJ43q/2TU1ASswJOKXIAylxfV9+gK2iMfz9PCya0AWVzLXuC/BKP7iBIYq7WyXUSEK/E22BTdjXEokscvqEdM2KVNe3zsElTMvbNRX8ZNkeRXtenFeYAoggo2rRHiDoAembNVevBnGfPuD5kDg6yhqnpEl8vhWDWt7ZW9pPYAyXiE3Qk6+5zlEv0jCRnF5tIDqAlY1BSBWBu5IqfyE6znVA+zfdyEs0JHE=
+  file: dcad-linux-x64
+  on:
+    repo: b1naryth1ef/dcad
