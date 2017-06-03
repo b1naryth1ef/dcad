@@ -52,14 +52,16 @@ void encode(CommandLineArgs args) {
   short[] rawData;
   rawData.length = (args.frameSize * args.channels);
 
+  short[] data;
+
   while (true) {
-    const short[] data = input.rawRead(rawData);
+    data = input.rawRead(rawData);
 
     if (data.length != rawData.length) {
       break;
     }
 
-    Frame(enc.encode(data, args.frameSize)).write(output);
+    Frame(enc.encode(cast(immutable)data, args.frameSize)).write(output);
 
     if (args.flush) {
       output.flush();
